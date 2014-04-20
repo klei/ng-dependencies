@@ -44,3 +44,25 @@ This will output:
   }
 ]
 ```
+
+### Special Cases
+If multiple declarations of the same module is encountered, (according to [Angular Doc](https://docs.angularjs.org/guide/module)), the later declaration will overwrite any existing module that is declared with the same module name.
+
+For example, the following content:
+```js
+angular.module('test', ['one']);
+angular.module('test', ['another']);
+```
+
+will output:
+```js
+[
+  {
+    uses: ['another']
+  },
+  {
+    name: 'test',
+    uses: ['another']
+  }
+]
+```
