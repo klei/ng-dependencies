@@ -30,19 +30,13 @@ angular.module('useThis').run(function () {
 
 This will output:
 ```js
-[
-  {
-    uses: ['one', 'useThis']
-  },
-  {
-    name: 'test',
-    uses: ['one']
-  },
-  {
-    name: 'another',
-    uses: []
+{
+  dependencies: ['one', 'useThis'],
+  modules: {
+    'test': ['one'],
+    'another': []
   }
-]
+}
 ```
 
 ### Special Cases
@@ -56,13 +50,13 @@ angular.module('test', ['another']);
 
 will output:
 ```js
-[
   {
-    uses: ['another']
-  },
-  {
-    name: 'test',
-    uses: ['another']
+    dependencies: ['another'],
+    modules: {
+      'test': ['another']
+    }
   }
-]
 ```
+
+### Change log
+0.1.0 simplified output format; added detection for angular.js itself

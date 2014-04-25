@@ -5,23 +5,32 @@ var estraverse = require('estraverse');
 
 require('sugar');
 
-function findDependencies(source) {
+function parseOptions(opts) {
+  var defaultOpts = {
+    // default options
+  };
+  return Object.merge(defaultOpts, (opts || {}));
+}
+
+function findDependencies(source, opts) {
+  opts = parseOptions(opts);
+
   var rootDeps = [];
   var modules = {};
 
   estraverse.traverse(esprima.parse(source), {
     leave: function (node, parent) {
       if (!isAngularModuleStatement(node)) {
+        if (isNgModuleDeclaration(node)) {
+          modules['ng'] = [];
+        }
         return;
       }
 
       var moduleName = parent.arguments[0].value;
       if (parent.arguments[1]) {
         // if already declared, will reset dependencies, like how angular behaves (latest declaration wins)
-        modules[moduleName] = {
-          name: moduleName,
-          uses: parent.arguments[1].elements.map('value')
-        };
+        modules[moduleName] = parent.arguments[1].elements.map('value');
       } else {
         rootDeps.push(moduleName);
       }
@@ -32,17 +41,30 @@ function findDependencies(source) {
   rootDeps
     .add(
       Object.values(modules)
-      .map('uses')
       .flatten())
     .unique()
     .subtract(Object.keys(modules));
 
-  return [{uses: rootDeps}].concat(Object.values(modules));
+  if (!Object.has(modules, 'ng') && !rootDeps.any('ng')) {
+    rootDeps.unshift('ng');
+  }
+
+  var ret = {
+    dependencies: rootDeps,
+    modules: modules
+  }
+
+  return ret;
 }
 
 function isAngularModuleStatement(node) {
   return node.type === 'MemberExpression' && node.object.name === 'angular' && node.property.name === 'module';
 }
 
+function isNgModuleDeclaration(node) {
+  return node.type === 'CallExpression' && node.callee.name === 'angularModule' && node.arguments.length > 0 && node.arguments[0].value === 'ng';
+}
+
 module.exports = findDependencies;
 module.exports.isAngularModuleStatement = isAngularModuleStatement;
+module.exports.isNgModuleDeclaration = isNgModuleDeclaration;
