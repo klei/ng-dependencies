@@ -30,17 +30,33 @@ angular.module('useThis').run(function () {
 
 This will output:
 ```js
-[
-  {
-    uses: ['one', 'useThis']
-  },
-  {
-    name: 'test',
-    uses: ['one']
-  },
-  {
-    name: 'another',
-    uses: []
+{
+  dependencies: ['one', 'useThis'],
+  modules: {
+    'test': ['one'],
+    'another': []
   }
-]
+}
 ```
+
+### Special Cases
+If multiple declarations of the same module is encountered, (according to [Angular Doc](https://docs.angularjs.org/guide/module)), the later declaration will overwrite any existing module that is declared with the same module name.
+
+For example, the following content:
+```js
+angular.module('test', ['one']);
+angular.module('test', ['another']);
+```
+
+will output:
+```js
+  {
+    dependencies: ['another'],
+    modules: {
+      'test': ['another']
+    }
+  }
+```
+
+### Change log
+0.1.0 simplified output format; added detection for angular.js itself
