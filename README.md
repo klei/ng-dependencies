@@ -59,4 +59,7 @@ will output:
 ```
 
 ### Change log
-0.1.0 simplified output format; added detection for angular.js itself
+
+0.1.1 - fixing repo url in `package.json` and removing unnecessary dependency.
+
+0.1.0 - simplified output format; added detection for angular.js itself.
