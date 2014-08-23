@@ -23,7 +23,7 @@ describe('lookup', function () {
     lookup(source).should.eql(deps);
   });
 
-  it('should cature module dependencies at root level', function () {
+  it('should capture module dependencies at root level', function () {
     var source = 'angular.module("test");\nangular.module("another").controller("Ctrl", ["$scope", function ($scope) {}]);';
     var deps = {
       dependencies: ['ng', 'test', 'another'],
@@ -39,6 +39,18 @@ describe('lookup', function () {
       modules: {
         'test': [],
         'another': ['that']
+      }
+    };
+    lookup(source).should.eql(deps);
+  });
+
+  it('should not include locally declared modules in `dependencies` list', function () {
+    var source = 'angular.module("test", []);\nangular.module("another", ["that", "test"]);';
+    var deps = {
+      dependencies: ['ng', 'that'],
+      modules: {
+        'test': [],
+        'another': ['that', 'test']
       }
     };
     lookup(source).should.eql(deps);

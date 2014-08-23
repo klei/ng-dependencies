@@ -42,8 +42,8 @@ function findDependencies(source, opts) {
     .add(
       Object.values(modules)
       .flatten())
-    .unique()
-    .subtract(Object.keys(modules));
+    .unique();
+    rootDeps = rootDeps.subtract(Object.keys(modules));
 
   if (!Object.has(modules, 'ng') && !rootDeps.any('ng')) {
     rootDeps.unshift('ng');
