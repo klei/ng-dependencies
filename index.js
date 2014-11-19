@@ -19,7 +19,7 @@ function findDependencies(source, opts) {
   var modules = {};
 
   estraverse.traverse(esprima.parse(source), {
-    leave: function (node, parent) {
+    leave: function(node, parent) {
       if (!isAngularModuleStatement(node)) {
         if (isNgModuleDeclaration(node)) {
           modules['ng'] = [];
@@ -43,9 +43,10 @@ function findDependencies(source, opts) {
       Object.values(modules)
       .flatten())
     .unique();
-    rootDeps = rootDeps.subtract(Object.keys(modules));
+  rootDeps = rootDeps.subtract(Object.keys(modules));
 
-  if (!Object.has(modules, 'ng') && !rootDeps.any('ng')) {
+  var isAngular = Object.keys(modules).length > 0 || rootDeps.length > 0;
+  if (isAngular && !Object.has(modules, 'ng') && !rootDeps.any('ng')) {
     rootDeps.unshift('ng');
   }
 

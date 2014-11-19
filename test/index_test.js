@@ -1,6 +1,15 @@
 var lookup = require('../');
 
 describe('lookup', function () {
+  it('should return empty dependency list and empty module map for non-angular files', function () {
+    var source = 'var jquery = {};';
+    var deps = {
+      dependencies: [],
+      modules: {}
+    };
+    lookup(source).should.eql(deps);
+  });
+
   it('should capture simple module declaration', function () {
     var source = 'angular.module("test", []);';
     var deps = {
