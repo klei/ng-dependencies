@@ -2,14 +2,13 @@
 
 var esprima = require('esprima');
 var estraverse = require('estraverse');
-
-require('sugar');
+var _ = require('lodash');
 
 function parseOptions(opts) {
   var defaultOpts = {
     // default options
   };
-  return Object.merge(defaultOpts, (opts || {}));
+  return _.merge(defaultOpts, (opts || {}));
 }
 
 function findDependencies(source, opts) {
@@ -30,23 +29,22 @@ function findDependencies(source, opts) {
       var moduleName = parent.arguments[0].value;
       if (parent.arguments[1]) {
         // if already declared, will reset dependencies, like how angular behaves (latest declaration wins)
-        modules[moduleName] = parent.arguments[1].elements.map('value');
+        modules[moduleName] = _.pluck(parent.arguments[1].elements, 'value');
       } else {
         rootDeps.push(moduleName);
       }
     }
   });
 
-  // aggregates all root + sub depedencies, and remove ones that were declared locally
-  rootDeps
-    .add(
-      Object.values(modules)
-      .flatten())
-    .unique();
-  rootDeps = rootDeps.subtract(Object.keys(modules));
+  var moduleKeys = _.keys(modules);
+  var moduleValues = _.values(modules);
 
-  var isAngular = Object.keys(modules).length > 0 || rootDeps.length > 0;
-  if (isAngular && !Object.has(modules, 'ng') && !rootDeps.any('ng')) {
+  // aggregates all root + sub depedencies, and remove ones that were declared locally
+  rootDeps = _(rootDeps).union(_.flatten(moduleValues)).unique().value();
+  rootDeps = _.difference(rootDeps, moduleKeys);
+
+  var isAngular = moduleKeys.length > 0 || rootDeps.length > 0;
+  if (isAngular && !_.has(modules, 'ng') && !_.any(rootDeps, 'ng')) {
     rootDeps.unshift('ng');
   }
 
