@@ -86,4 +86,17 @@ describe('lookup', function () {
     };
     lookup(source).should.eql(deps);
   });
+
+  it('should ignore import in source', function () {
+    var source = 'import angular from "angular";\n' +
+        'angular.module("test", []);';
+
+    var deps = {
+      dependencies: ['ng'],
+      modules: {
+        'test': []
+      }
+    };
+    lookup(source).should.eql(deps);
+  });
 });

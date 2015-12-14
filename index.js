@@ -17,7 +17,7 @@ function findDependencies(source, opts) {
   var rootDeps = [];
   var modules = {};
 
-  estraverse.traverse(esprima.parse(source), {
+  estraverse.traverse(esprima.parse(source, {sourceType: "module"}), {
     leave: function(node, parent) {
       if (!isAngularModuleStatement(node)) {
         if (isNgModuleDeclaration(node)) {
