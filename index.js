@@ -29,7 +29,7 @@ function findDependencies(source, opts) {
       var moduleName = parent.arguments[0].value;
       if (parent.arguments[1]) {
         // if already declared, will reset dependencies, like how angular behaves (latest declaration wins)
-        modules[moduleName] = _.pluck(parent.arguments[1].elements, 'value');
+        modules[moduleName] = _.map(parent.arguments[1].elements, 'value');
       } else {
         rootDeps.push(moduleName);
       }
@@ -40,18 +40,18 @@ function findDependencies(source, opts) {
   var moduleValues = _.values(modules);
 
   // aggregates all root + sub depedencies, and remove ones that were declared locally
-  rootDeps = _(rootDeps).union(_.flatten(moduleValues)).unique().value();
+  rootDeps = _(rootDeps).union(_.flatten(moduleValues)).uniq().value();
   rootDeps = _.difference(rootDeps, moduleKeys);
 
   var isAngular = moduleKeys.length > 0 || rootDeps.length > 0;
-  if (isAngular && !_.has(modules, 'ng') && !_.any(rootDeps, 'ng')) {
+  if (isAngular && !_.has(modules, 'ng') && !_.some(rootDeps, 'ng')) {
     rootDeps.unshift('ng');
   }
 
   var ret = {
     dependencies: rootDeps,
     modules: modules
-  }
+  };
 
   return ret;
 }
