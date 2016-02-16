@@ -15,7 +15,7 @@
   "dependencies": {
     "esprima": "^2.6.0",
     "estraverse": "^1.5.1",
-    "lodash": "^3.0.1"
+    "lodash": "^4.0.0"
   },
   "devDependencies": {
     "gulp-mocha": "^0.4.1",
