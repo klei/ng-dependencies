@@ -1,3 +1,5 @@
+require('chai').should();
+
 var lookup = require('../');
 
 describe('lookup', function () {
