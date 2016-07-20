@@ -101,4 +101,16 @@ describe('lookup', function () {
     };
     lookup(source).should.eql(deps);
   });
+
+  it('should capture simple module declaration using a variable instead of a literal module name', function () {
+    var source = 'var moduleName = "test"; angular.module(moduleName, []);';
+    var deps = {
+      dependencies: ['ng'],
+      modules: {
+        'test': []
+      }
+    };
+    lookup(source).should.eql(deps);
+  });
+
 });
