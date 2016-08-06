@@ -20,7 +20,7 @@ function findDependencies(source, opts) {
 
   estraverse.traverse(esprima.parse(source, {sourceType: "module"}), {
     leave: function(node, parent) {
-      if (canBeModuleNameVariable(node)) {
+      if (canBeModuleNameVariableDeclaration(node)) {
         potentialModuleNameVariable[node.id.name] = node.init.value;
       }
 
@@ -70,8 +70,8 @@ function isNgModuleDeclaration(node) {
   return node.type === 'CallExpression' && node.callee.name === 'angularModule' && node.arguments.length > 0 && node.arguments[0].value === 'ng';
 }
 
-function canBeModuleNameVariable(node) {
-  return node.type === 'VariableDeclarator' && typeof node.init.value === 'string';
+function canBeModuleNameVariableDeclaration(node) {
+  return node.type === 'VariableDeclarator' && node.init && typeof node.init.value === 'string';
 }
 
 module.exports = findDependencies;
