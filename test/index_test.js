@@ -113,4 +113,9 @@ describe('lookup', function () {
     lookup(source).should.eql(deps);
   });
 
+  it('should not crash on uninitialized variables', function () {
+    var source = 'var uninitializedVar;';
+    lookup(source);
+  });
+
 });
